@@ -14,7 +14,8 @@ import Col from 'react-bootstrap/Col'
 const columns = [{
     dataField: 'rank',
     text: 'Rank',
-    sort: true
+    sort: true,
+    filter: textFilter()
   }, {
     dataField: 'title',
     text: 'Title',
@@ -71,6 +72,7 @@ function App() {
               <BootstrapTable keyField='rank' data={ dataFetched } 
                 columns={ columns } pagination={ paginationFactory({hideSizePerPage: true}) } 
                 filter={ filterFactory() } noDataIndication="Table is Empty"
+                filterPosition="top"
               />
           </Col>
         </Row>
