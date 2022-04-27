@@ -7,17 +7,14 @@ import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 
 function App() {
-  const [articleTitle, setArticleTitle] = useState("") 
-  const [articleCommentsNumber, setArticleCommentsNumber] = useState(0)
-  const [articleOrderNumber, srticleOrderNumber] = useState(0)
-  const [articlePoints, setArticlePoints] = useState(0)
-  const [dataFetched, setDataFetched] = useState(0)
+  const [dataFetched, setDataFetched] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const {data: response} = await axios.get('http://localhost:3001/crawl');
-        console.log(response)
+        setDataFetched(response)
+      
       } catch (error) {
         console.error(error.message)
       }
@@ -32,30 +29,23 @@ function App() {
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
+            <th>Rank</th>
+            <th>Title</th>
+            <th>Points</th>
+            <th>NumberOfComments</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td colSpan={2}>Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
+          {dataFetched.map(item => {
+            return (
+              <tr key={item.rank}>
+                <td>{ item.rank }</td>
+                <td>{ item.title }</td>
+                <td>{ item.points }</td>
+                <td>{ item.comments }</td>
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
     </>
