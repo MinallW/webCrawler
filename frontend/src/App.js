@@ -3,8 +3,30 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
+import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+
+const columns = [{
+    dataField: 'rank',
+    text: 'Rank',
+    sort: true
+  }, {
+    dataField: 'title',
+    text: 'Title',
+    sort: true
+  }, {
+    dataField: 'points',
+    text: 'Article Points',
+    sort: true
+  }, {
+    dataField: 'comments',
+    text: 'Number of Comments',
+    sort: true
+  }
+];
 
 function App() {
   const [dataFetched, setDataFetched] = useState([])
@@ -26,28 +48,7 @@ function App() {
     <>
       <h1>Web Crawler Application</h1>
       <Button variant="outline-primary">Primary</Button>
-      <Table striped bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Title</th>
-            <th>Points</th>
-            <th>NumberOfComments</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataFetched.map(item => {
-            return (
-              <tr key={item.rank}>
-                <td>{ item.rank }</td>
-                <td>{ item.title }</td>
-                <td>{ item.points }</td>
-                <td>{ item.comments }</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+      <BootstrapTable keyField='rank' data={ dataFetched } columns={ columns } pagination={ paginationFactory({hideSizePerPage: true}) } />
     </>
   );
 }
