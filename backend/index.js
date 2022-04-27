@@ -3,13 +3,33 @@ const express = require('express'),
     cors = require('cors')
 
 const app = express();
+const Crawler = require('crawler')
 
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-    res.send('Hi There')
+app.get('/crawl', (req, res) => {
+  crawlerInstance.queue('https://news.ycombinator.com');
+});
+
+const crawlerInstance = new Crawler({
+    maxConnections: 10,
+
+    callback: (error, res, done) => {
+        if (error) {
+            console.log(error);
+        } else {
+            const $ = res.$;
+            const articleTitle = $('#hnmain > tbody > tr:nth-child(3) > td > table > tbody > tr');
+            console.log(articleTitle.find('td').text())
+            articleTitle.each(function() {
+              let title = $(this).find('td').text();
+              console.log(title)
+            })
+        }
+        done();
+    }
 });
 
 app.get('/get', (req, res) => {
@@ -27,4 +47,4 @@ app.delete("/delete/:bookId", (req, res) => {
     const DeleteQuery = "DELETE FROM books_reviews WHERE id = ?";
 })
 
-app.listen('3001', () => { })
+app.listen('3001', () => { console.log("API is now running...") })

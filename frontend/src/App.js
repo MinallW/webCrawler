@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const {data: response} = await axios.get('http://localhost:3001');
+        const {data: response} = await axios.get('http://localhost:3001/crawl');
         console.log(response)
       } catch (error) {
         console.error(error.message)
