@@ -3,34 +3,39 @@ const express = require('express'),
     cors = require('cors')
 
 const app = express();
-const Crawler = require('crawler')
+const axios = require('axios'); 
+const cheerio = require('cheerio'); 
 
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/crawl', (req, res) => {
-  crawlerInstance.queue('https://news.ycombinator.com');
+  axios.get('https://news.ycombinator.com/').then(({ data }) => { 
+    const $ = cheerio.load(data); 
+    const links = extractLinks($); 
+    const content = extractContent($); 
+    $('.titlelink').each(element => {
+      console.log($(element).attr('href'))
+    })
+  });  
 });
 
-const crawlerInstance = new Crawler({
-    maxConnections: 10,
+const extractContent = $ => {
+	$('#hnmain > tbody > tr:nth-child(3) > td > table > tbody > tr').each(element => {
+    console.log($(element).text())
+  })
 
-    callback: (error, res, done) => {
-        if (error) {
-            console.log(error);
-        } else {
-            const $ = res.$;
-            const articleTitle = $('#hnmain > tbody > tr:nth-child(3) > td > table > tbody > tr');
-            console.log(articleTitle.find('td').text())
-            articleTitle.each(function() {
-              let title = $(this).find('td').text();
-              console.log(title)
-            })
-        }
-        done();
-    }
-});
+}
+
+const extractLinks = $ => [ 
+	...new Set( 
+		$('.morelink') // Select pagination links 
+			.map((_, a) => $(a).attr('href')) // Extract the href (url) from each link 
+			.toArray() // Convert cheerio object to array 
+	), 
+]; 
+
 
 app.get('/get', (req, res) => {
     const SelectQuery = " SELECT * FROM articles_news";
