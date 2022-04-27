@@ -39,11 +39,13 @@ const columns = [{
 
 function App() {
   const [dataFetched, setDataFetched] = useState([])
+  const [buttonState, setButtonState] = useState(true)
 
   const fetchData = async () => {
     try {
       const {data: response} = await axios.get('http://localhost:3001/crawl');
       setDataFetched(response)
+      setButtonState(false)
     
     } catch (error) {
       console.error(error.message)
@@ -53,7 +55,10 @@ function App() {
   return (
     <>
       <h1>Web Crawler Application</h1>
+      { buttonState ? 
       <Button variant="outline-primary" onClick={fetchData}>Crawl Hacker News!</Button>
+      : <Button variant="outline-primary" onClick={fetchData} disabled>Crawl Hacker News!</Button>}
+
       <BootstrapTable keyField='rank' data={ dataFetched } 
         columns={ columns } pagination={ paginationFactory({hideSizePerPage: true}) } 
         filter={ filterFactory() } 
