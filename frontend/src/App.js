@@ -7,6 +7,9 @@ import Button from 'react-bootstrap/Button';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 const columns = [{
     dataField: 'rank',
@@ -54,15 +57,25 @@ function App() {
 
   return (
     <>
-      <h1>Web Crawler Application</h1>
-      { buttonState ? 
-      <Button variant="outline-primary" onClick={fetchData}>Crawl Hacker News!</Button>
-      : <Button variant="outline-primary" onClick={fetchData} disabled>Crawl Hacker News!</Button>}
+      <Container fluid>
+        <Row>
+          <Col>
+            <h1>Web Crawler Application</h1>
+              <div className="crawlButton">
+                { buttonState ? 
+                <Button variant="outline-primary" onClick={fetchData}>Crawl Hacker News!</Button>
+                : <Button variant="outline-primary" onClick={fetchData} disabled>Crawl Hacker News!</Button>}
+              </div>
 
-      <BootstrapTable keyField='rank' data={ dataFetched } 
-        columns={ columns } pagination={ paginationFactory({hideSizePerPage: true}) } 
-        filter={ filterFactory() } 
-      />
+
+              <BootstrapTable keyField='rank' data={ dataFetched } 
+                columns={ columns } pagination={ paginationFactory({hideSizePerPage: true}) } 
+                filter={ filterFactory() } noDataIndication="Table is Empty"
+              />
+          </Col>
+        </Row>
+      </Container>
+
     </>
   );
 }
