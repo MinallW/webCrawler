@@ -3,39 +3,59 @@ const express = require('express'),
     cors = require('cors')
 
 const app = express();
-const axios = require('axios'); 
-const cheerio = require('cheerio'); 
+
+const fetch = require('node-fetch')
+const cheerio = require('cheerio')
+
+const getPagesArray = (numberOfPosts) =>
+  Array(Math.ceil(numberOfPosts / 30))   //divides by 30 (posts per page)
+    .fill()                          //creates a new array
+    .map((_, index) => index + 1)   //[1, 2, 3, 4,..] PagesArray
+const getPageHTML = (pageNumber) =>
+  fetch(`https://news.ycombinator.com/news?p=${pageNumber}`)
+    .then(resp => resp.text())   //Promise
+const getAllHTML = async (numberOfPosts) => {
+  return Promise.all(getPagesArray(numberOfPosts).map(getPageHTML))
+    .then(htmls => getPosts(htmls.join(''), numberOfPosts)) //one JOINED html
+}
 
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/crawl', (req, res) => {
-  axios.get('https://news.ycombinator.com/').then(({ data }) => { 
-    const $ = cheerio.load(data); 
-    const links = extractLinks($); 
-    const content = extractContent($); 
-    $('.titlelink').each(element => {
-      console.log($(element).attr('href'))
-    })
-  });  
+  getAllHTML(300) 
 });
 
-const extractContent = $ => {
-	$('#hnmain > tbody > tr:nth-child(3) > td > table > tbody > tr').each(element => {
-    console.log($(element).text())
+const getPosts = (html, posts) => {
+  let results = []
+  let $ = cheerio.load(html)
+$('span.comhead').each(function() {
+    let a = $(this).prev()
+let title = a.text()
+    let uri = a.attr('href')
+    let rank = a.parent().parent().text()
+let subtext = a.parent().parent().next().children('.subtext').children()
+    let author = $(subtext).eq(1).text()
+    let points = $(subtext).eq(0).text()
+    let comments = $(subtext).eq(5).text()
+let obj = {
+       title: title,
+       uri: uri,
+       author: author,
+       points: points,
+       comments: comments,
+       rank: parseInt(rank)
+    }
+    if (obj.rank <= posts) {
+      results.push(obj)
+    }
   })
-
+  if (results.length > 0) {
+    console.log(results)   
+    return results
+  }
 }
-
-const extractLinks = $ => [ 
-	...new Set( 
-		$('.morelink') // Select pagination links 
-			.map((_, a) => $(a).attr('href')) // Extract the href (url) from each link 
-			.toArray() // Convert cheerio object to array 
-	), 
-]; 
-
 
 app.get('/get', (req, res) => {
     const SelectQuery = " SELECT * FROM articles_news";
