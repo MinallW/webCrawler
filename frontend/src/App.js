@@ -47,7 +47,7 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const {data: response} = await axios.get('http://localhost:3001/crawl');
+      const {data: response} = await axios.get('/api/crawl');
       setDataFetched(response)
       setButtonState(false)
     
