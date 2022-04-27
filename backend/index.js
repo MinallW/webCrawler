@@ -55,7 +55,7 @@ const getPosts = (html, posts) => {
 $('span.comhead').each(function() {
     let a = $(this).prev()
 let title = a.text()
-    let uri = a.attr('href')
+    let uri = a.attr('href').trim
     let rank = a.parent().parent().text()
 let subtext = a.parent().parent().next().children('.subtext').children()
     let author = $(subtext).eq(1).text()

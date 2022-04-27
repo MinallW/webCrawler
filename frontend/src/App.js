@@ -16,7 +16,10 @@ const columns = [{
   }, {
     dataField: 'title',
     text: 'Title',
-    sort: true
+    sort: true,
+    sortFunc: (a, b, order) => {
+      return order === 'asc' ? a.length - b.length : b.length - a.length
+    }
   }, {
     dataField: 'points',
     text: 'Article Points',
