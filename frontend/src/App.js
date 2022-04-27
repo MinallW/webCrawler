@@ -16,12 +16,13 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const {data: response} = await axios.get('/api/');
-
+        const {data: response} = await axios.get('http://localhost:3001');
+        console.log(response)
       } catch (error) {
         console.error(error.message)
       }
     }
+    fetchData()
   }, [])
 
   return (
