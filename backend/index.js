@@ -48,13 +48,13 @@ let obj = {
     }
   })
   if (results.length > 0) {
-    console.log(results)   
     return results
   }
 }
 
-app.get('/crawl', (req, res) => {
-  getAllHTML(300) 
+app.get('/crawl', async (req, res) => {
+  const response = await getAllHTML(600)
+  res.json(response)
 });
 
 app.listen('3001', () => { console.log("API is now running...") })
